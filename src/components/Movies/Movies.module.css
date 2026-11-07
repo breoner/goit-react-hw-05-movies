@@ -1,0 +1,36 @@
+.section {
+  padding-bottom: 20px;
+}
+.form {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+.label {
+  width: 100%;
+  font-weight: 600;
+}
+.input {
+  max-width: 360px;
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 10px;
+  background: white;
+}
+.button {
+  background: #2563eb;
+  color: white;
+  border: 0;
+  border-radius: 6px;
+  padding: 11px 20px;
+  cursor: pointer;
+}
+.button:hover {
+  background: #1d4ed8;
+}
+.error {
+  color: #b91c1c;
+}

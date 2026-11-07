@@ -1,0 +1,22 @@
+.list {
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 16px;
+}
+.review {
+  padding: 18px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+.review h3 {
+  margin-top: 0;
+}
+.content {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.error {
+  color: #b91c1c;
+}

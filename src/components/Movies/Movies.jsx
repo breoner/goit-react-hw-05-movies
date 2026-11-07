@@ -1,43 +1,80 @@
-import { useState, useEffect } from "react";
-import { Link, useSearchParams, useLocation } from "react-router-dom";
-import { searchMovies } from "../../api";
+import { useEffect, useState } from 'react';
+import { useLocation, useSearchParams } from 'react-router-dom';
+import { isRequestCanceled, searchMovies } from '../../api';
+import MovieList from '../MovieList/MovieList';
+import styles from './Movies.module.css';
 
 export default function Movies() {
   const [movies, setMovies] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
-  const query = searchParams.get("query") ?? "";
+  const query = (searchParams.get('query') || '').trim();
+  const [input, setInput] = useState(query);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const location = useLocation();
 
   useEffect(() => {
-    if (!query) return;
-    searchMovies(query)
-      .then(setMovies)
-      .catch(console.error);
+    setInput(query);
+  }, [query]);
+  useEffect(() => {
+    const controller = new AbortController();
+    setMovies([]);
+    setError('');
+    setLoading(Boolean(query));
+    if (!query) return () => controller.abort();
+    searchMovies(query, controller.signal)
+      .then((results) => {
+        if (!controller.signal.aborted) setMovies(results);
+      })
+      .catch((err) => {
+        if (!isRequestCanceled(err) && !controller.signal.aborted)
+          setError('Помилка пошуку. Спробуйте ще раз.');
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
+    return () => controller.abort();
   }, [query]);
 
-  const handleSubmit = e => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const searchQuery = form.elements.query.value.trim();
-    if (!searchQuery) return;
-    setSearchParams({ query: searchQuery });
-  };
+  function handleSubmit(event) {
+    event.preventDefault();
+    const next = input.trim();
+    if (next) setSearchParams({ query: next });
+    else setSearchParams({});
+  }
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="query" defaultValue={query} placeholder="Search movies..." />
-        <button type="submit">Search</button>
+    <section className={styles.section}>
+      <h1>Пошук фільмів</h1>
+      <form className={styles.form} onSubmit={handleSubmit}>
+        <label className={styles.label} htmlFor="search-movie">
+          Назва фільму
+        </label>
+        <input
+          id="search-movie"
+          className={styles.input}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Введіть назву…"
+        />
+        <button className={styles.button} type="submit">
+          Знайти
+        </button>
       </form>
-      <ul>
-        {movies.map(movie => (
-          <li key={movie.id}>
-            <Link to={`/movies/${movie.id}`} state={{ from: location }}>
-              {movie.title || movie.name}
-            </Link>
-          </li>
+      {loading && <p role="status">Пошук…</p>}
+      {error && (
+        <p role="alert" className={styles.error}>
+          {error}
+        </p>
+      )}
+      {!loading &&
+        !error &&
+        query &&
+        (movies.length ? (
+          <MovieList movies={movies} from={location} />
+        ) : (
+          <p>За запитом нічого не знайдено.</p>
         ))}
-      </ul>
-    </div>
+    </section>
   );
 }

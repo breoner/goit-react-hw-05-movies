@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Повернення до застосунку…</title>
+    <script>
+      (function () {
+        var base = '/goit-react-hw-05-movies/';
+        var path = window.location.pathname;
+        var route = path.startsWith(base) ? path.slice(base.length - 1) : '/';
+        var destination =
+          base +
+          '?redirect=' +
+          encodeURIComponent(route + window.location.search + window.location.hash);
+        window.location.replace(destination);
+      })();
+    </script>
+  </head>
+  <body>
+    Повернення до застосунку…
+  </body>
+</html>

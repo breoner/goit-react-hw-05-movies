@@ -1,0 +1,10 @@
+.section {
+  padding-bottom: 20px;
+}
+.title {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  margin-top: 0;
+}
+.error {
+  color: #b91c1c;
+}

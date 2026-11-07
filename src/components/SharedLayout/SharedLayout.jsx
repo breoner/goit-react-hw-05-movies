@@ -1,19 +1,29 @@
-import { Outlet, Link } from "react-router-dom";
+import { NavLink, Outlet } from 'react-router-dom';
+import styles from './SharedLayout.module.css';
 
-const SharedLayout = () => {
+export default function SharedLayout() {
   return (
-    <div>
-      <header style={{ padding: "20px", borderBottom: "1px solid #eee" }}>
-        <nav style={{ display: "flex", gap: "20px" }}>
-          <Link to="/">Home</Link>
-          <Link to="/movies">Movies</Link>
+    <>
+      <header className={styles.header}>
+        <nav className={styles.nav} aria-label="Основна навігація">
+          <NavLink
+            to="/"
+            end
+            className={({ isActive }) => (isActive ? styles.active : styles.link)}
+          >
+            Головна
+          </NavLink>
+          <NavLink
+            to="/movies"
+            className={({ isActive }) => (isActive ? styles.active : styles.link)}
+          >
+            Пошук фільмів
+          </NavLink>
         </nav>
       </header>
-      <main style={{ padding: "20px" }}>
+      <main className={styles.main}>
         <Outlet />
       </main>
-    </div>
+    </>
   );
-};
-
-export default SharedLayout;
+}
